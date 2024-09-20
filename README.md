@@ -35,7 +35,7 @@
 Clone o projeto do seu repositório Git localmente:
 
 ```bash
-git clone https://github.com/seu-usuario/aprendacerto.git
+git clone https://github.com/renejr/aprendacerto.git
 cd aprendacerto
 ```
 
