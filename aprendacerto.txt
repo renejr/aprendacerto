@@ -1,0 +1,79 @@
+AprendaCerto (Processo de Login, Novo Cadastro e Esqueci minha senha com seus respectivos fluxos)
+
+Teremos as telas para:
+Login (index.html);
+Bem Vindo (bemvindo.html);
+Nova Conta (novaconta.html);
+Esqueci Minha Senha (esquecisenha.html).
+
+Tecnologias:
+HTML
+CSS
+BOOTSTRAP
+JAVASCRIPT
+JQUERY
+PHP
+MYSQL
+
+Banco de Dados:
+Host:localhost
+Port:3307
+User:root
+Pass:nao existe senha cadastrada
+BD:aprendacerto
+tabela:usuarios
+
+Estrutura da tabela usuarios:
+CREATE TABLE `usuarios` (
+	`id` INT(11) NOT NULL AUTO_INCREMENT,
+	`email` VARCHAR(250) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci',
+	`senha` VARCHAR(250) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci',
+	`criado_em` TIMESTAMP NOT NULL DEFAULT current_timestamp(),
+	PRIMARY KEY (`id`) USING BTREE
+)
+COLLATE='latin1_swedish_ci'
+ENGINE=MyISAM
+;
+
+Iremos criar um codigo e arquivo php (bdclass.php) que tera a classe de conexao pdo e metodos para select, insert, delete e update.
+
+Teremos um outro arquivo com codigo php (consumos.php) que ira instanciar a classe e iterar com os metodos necessarios para as acoes vindas por jquery.
+
+Todo os formularios devem ter um visual moderno, responsivo para todas as medias utilizando css e bootstrap, os que possuirem formularios devem ser de preenchimento obrigatorio e  ter validacoes do lado do cliente e lado do servidor como serao explicados.
+Todas as paginas html devem conter o logo logo-aprendacerto.png de demiensao 250x43pixels no topo da tela e este logo se encontra na pasta img.
+
+Vamos as paginas e suas funcoes:
+
+index.html (respoonsavel pelo login do usuario):
+Um bloco no centro da tela que ira conter um formulario com os campos E-mail cadastrado e Senha. O botao para Entrar e dois links para Novo Cadastro e Esqueci minha senha
+No evento do clique do botao Entrar , validar no banco de dados a existencia do usuario e se os dados submetudos foram corretos.
+Se estao corretos os dados exibir um alerta de Login efetuado com sucesso e direcionar para a pagina bemvindo.html
+
+Se nao estiverem corretos ou nao existir o usuarios exibir o alerta (dados incorretos ou usario inexistente) e redirecionar a pagina index.html
+
+-----------
+
+novaconta.html
+
+Deve conter um box central com os campos E-mail e Senha, um Botao Cadastrar e o link voltar que ira retornar a pagina index.html
+
+Quando clicado o botao Cadastrar validar no banco de dados se ja existe o usuario (valindo pelo email).
+
+Se nao existir o usuario cadastrado gravar os dados nos banco de dados exibir um alerta (Cadastro efetuado com sucesso) e redirecionar para a pagina index.html
+Se ja existir um cadastro exibir o alerta (Usuario ja cadastrado) e redirecionar para a pagina novaconta.html.
+
+
+-----------------------------------
+esquecisenha.html
+
+sera uma pagina com box central com um campo E-mail e o botao Recuperar Senha e um link voltar;
+
+No envento do clique do botao Recuperar validar a existencia do usuario no banco de dados;
+Se existir exibir um alerta Sua senha é: com a senha cadastrada no banco de dados e redirecionar para a tela index.html
+Se nao existir exibir o alerta Usuario nao encontrado e redirecionar para a pagina index.html
+
+Obrigado
+
+
+
+
