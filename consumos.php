@@ -9,6 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($action == 'login') {
         $email = $_POST['email'];
         $senha = $_POST['senha'];
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
         // Verificação de formato de e-mail
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
 
         // Valida usuário e senha no banco
-        $usuario = $db->select("SELECT * FROM usuarios WHERE email = :email AND senha = :senha", ['email' => $email, 'senha' => $senha]);
+        $usuario = $db->select("SELECT * FROM usuarios WHERE email = :email AND senha = :senha", ['email' => $email, 'senha' => $senhaHash]);
         if ($usuario) {
             // Inicia a sessão do usuário
             $_SESSION['email'] = $email;
@@ -29,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } elseif ($action == 'cadastrar') {
         $email = $_POST['email'];
         $senha = $_POST['senha'];
+        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
         // Verificação de formato de e-mail
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -42,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode(['status' => 'error', 'message' => 'Usuário já cadastrado']);
         } else {
             // Insere novo usuário
-            $db->insert("INSERT INTO usuarios (email, senha) VALUES (:email, :senha)", ['email' => $email, 'senha' => $senha]);
+            $db->insert("INSERT INTO usuarios (email, senha) VALUES (:email, :senha)", ['email' => $email, 'senha' => $senhaHash]);
             echo json_encode(['status' => 'success', 'message' => 'Cadastro efetuado com sucesso']);
         }
 
