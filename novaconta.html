@@ -21,7 +21,6 @@
 </head>
 <body>
     <div class="container text-center">
-        <img src="img/logo-aprendacerto.png" alt="Logo AprendaCerto" width="250" height="43" class="mt-5">
         <div class="col-md-4 offset-md-4 mt-3">
             <form id="cadastroForm">
                 <div class="mb-3">
@@ -31,7 +30,7 @@
                     <input type="password" class="form-control" id="senha" placeholder="Senha" required>
                     <span class="fa fa-eye position-absolute" id="togglePassword"></span>
                 </div>
-                
+                <div id="senhaAviso" class="text-start text-danger"></div> <div id="forcaSenha" class="text-start"></div>
                 <button type="submit" class="btn btn-primary w-100">Cadastrar</button>
             </form>
             <div class="mt-3">
@@ -42,10 +41,39 @@
 
     <script>
         $(document).ready(function(){
+            const senhaInput = $('#senha');
+            const senhaAviso = $('#senhaAviso');
+            const forcaSenha = $('#forcaSenha');
+
+            // Exibe a regra da senha ao carregar a página
+            senhaAviso.text("A senha deve conter no mínimo 6 caracteres, incluindo letras, números e pelo menos um caractere especial.");
+
+            senhaInput.on('keyup', function() {
+                const senha = senhaInput.val();
+                const seguranca = verificarForcaSenha(senha);
+
+                // Atualiza a força da senha dinamicamente
+                forcaSenha.text('Força da senha: ' + seguranca.nivel);
+
+                // Limpa a mensagem de erro se a senha for válida
+                if (seguranca.nivel === 'Baixo') {
+                    senhaAviso.text(seguranca.mensagem);
+                    forcaSenha.text(''); 
+                } else {
+                    senhaAviso.text(''); 
+                    // forcaSenha.text('Força da senha: ' + seguranca.nivel);
+                }
+            });
+
             $('#cadastroForm').on('submit', function(e) {
                 e.preventDefault();
                 var email = $('#email').val();
                 var senha = $('#senha').val();
+
+                if (verificarForcaSenha(senha).nivel === 'Baixo') {
+                    alert("A senha não atende aos requisitos mínimos.");
+                    return;
+                }
 
                 $.ajax({
                     url: 'consumos.php',
@@ -74,6 +102,27 @@
                     $(this).removeClass('fa-eye-slash').addClass('fa-eye'); // Volta ao ícone original
                 }
             });
+
+            function verificarForcaSenha(senha) {
+                var erros = [];
+                if (senha.length < 6) {
+                    erros.push("A senha deve ter pelo menos 6 caracteres.");
+                }
+                if (!/\d/.test(senha)) {
+                    erros.push("A senha deve conter pelo menos um número.");
+                }
+                if (!/[!@#$%^&*(),.?":{}|<>]/.test(senha)) {
+                    erros.push("A senha deve conter pelo menos um caractere especial.");
+                }
+
+                if (erros.length > 0) {
+                    return { nivel: 'Baixo', mensagem: erros.join(' ') };
+                } else if (senha.length >= 6 && senha.length <= 8) {
+                    return { nivel: 'Médio', mensagem: '' };
+                } else {
+                    return { nivel: 'Alto', mensagem: '' };
+                }
+            }
         });
     </script>
 </body>

@@ -1,5 +1,5 @@
 <?php
-session_start();  // Inicia a sessão
+session_start();
 require_once 'bdclass.php';
 $db = new BD();
 
@@ -9,7 +9,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($action == 'login') {
         $email = $_POST['email'];
         $senha = $_POST['senha'];
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
         // Verificação de formato de e-mail
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -17,20 +16,26 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        // Valida usuário e senha no banco
-        $usuario = $db->select("SELECT * FROM usuarios WHERE email = :email AND senha = :senha", ['email' => $email, 'senha' => $senhaHash]);
+        // Busca o usuário no banco de dados pelo email
+        $usuario = $db->select("SELECT * FROM usuarios WHERE email = :email", ['email' => $email]);
+
         if ($usuario) {
-            // Inicia a sessão do usuário
-            $_SESSION['email'] = $email;
-            echo json_encode(['status' => 'success', 'message' => 'Login efetuado com sucesso!']);
+            // Verifica se a senha está correta usando password_verify
+            if (password_verify($senha, $usuario[0]['senha'])) {
+                // Inicia a sessão do usuário
+                $_SESSION['email'] = $email;
+                echo json_encode(['status' => 'success', 'message' => 'Login efetuado com sucesso!']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Senha incorreta.']);
+            }
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Dados incorretos ou usuário inexistente']);
+            echo json_encode(['status' => 'error', 'message' => 'Usuário não encontrado.']);
         }
 
     } elseif ($action == 'cadastrar') {
         $email = $_POST['email'];
         $senha = $_POST['senha'];
-        $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
+        $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
         // Verificação de formato de e-mail
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -43,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($usuario_existente) {
             echo json_encode(['status' => 'error', 'message' => 'Usuário já cadastrado']);
         } else {
-            // Insere novo usuário
-            $db->insert("INSERT INTO usuarios (email, senha) VALUES (:email, :senha)", ['email' => $email, 'senha' => $senhaHash]);
+            // Insere novo usuário com a senha já em hash
+            $db->insert("INSERT INTO usuarios (email, senha) VALUES (:email, :senha)", ['email' => $email, 'senha' => $senha_hash]);
             echo json_encode(['status' => 'success', 'message' => 'Cadastro efetuado com sucesso']);
         }
 
@@ -57,10 +62,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         }
 
-        // Busca a senha do usuário no banco
+        // Busca o usuário no banco de dados pelo email
         $usuario = $db->select("SELECT * FROM usuarios WHERE email = :email", ['email' => $email]);
+
         if ($usuario) {
-            echo json_encode(['status' => 'success', 'message' => 'Sua senha é: ' . $usuario[0]['senha']]);
+            // Implemente aqui a lógica de redefinição de senha 
+            // (ex: enviar um email com um link para redefinir a senha)
+            echo json_encode(['status' => 'success', 'message' => 'Um email foi enviado para você com instruções para redefinir sua senha.']);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Usuário não encontrado']);
         }
