@@ -72,5 +72,41 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Usuário não encontrado']);
         }
+    } elseif ($action == 'atualizar_perfil') {
+        // Obter os dados do formulário (exceto o email)
+        $nome = $_POST['nome'];
+        $sobrenome = $_POST['sobrenome'];
+        // ... (obter os demais campos do formulário)
+    
+        // Validar os dados (implementar as validações necessárias)
+    
+        // Obter o ID do usuário a partir do email da sessão
+        $usuario = $db->select("SELECT id FROM usuarios WHERE email = :email", ['email' => $_SESSION['email']]);
+        $usuario_id = $usuario[0]['id'];
+    
+        // Atualizar os dados no banco de dados
+        $sql = "UPDATE dados_usuario SET 
+                    nome = :nome,
+                    sobrenome = :sobrenome,
+                    // ... (atualizar os demais campos)
+                WHERE usuario_id = :usuario_id"; 
+    
+        $params = [
+            'nome' => $nome,
+            'sobrenome' => $sobrenome,
+            // ... (adicionar os demais parâmetros)
+            'usuario_id' => $usuario_id
+        ];
+    
+        if ($db->update($sql, $params)) {
+            // Redirecionar para a página de perfil com mensagem de sucesso
+            header("Location: perfil.php?success=1");
+            exit();
+        } else {
+            // Redirecionar para a página de perfil com mensagem de erro
+            header("Location: perfil.php?error=1");
+            exit();
+        }
     }
+    
 }

@@ -22,6 +22,8 @@ if (!isset($_SESSION['email'])) {
     </style>
 </head>
 <body>
+<?php include 'navbar.php'; ?>
+
     <div class="container text-center">
         <img src="img/logo-aprendacerto.png" alt="Logo AprendaCerto" width="250" height="43" class="mt-5">
         <div class="col-md-6 offset-md-3 mt-5">
@@ -31,7 +33,6 @@ if (!isset($_SESSION['email'])) {
                 <hr>
                 <p class="mb-0">Obrigado por utilizar nossa plataforma. Continue navegando e aproveite nossos conteúdos!</p>
             </div>
-            <a href="logout.php" class="btn btn-primary">Sair</a>
         </div>
     </div>
 </body>
