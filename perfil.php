@@ -69,7 +69,7 @@ if (isset($_GET['success'])) {
                         <div class="mb-3">
                             <label for="cpf" class="form-label">CPF:</label>
                             <input type="text" class="form-control" id="cpf" name="cpf" 
-                                value="<?php echo isset($dados_usuario['cpf']) ? $dados_usuario['cpf'] : ''; ?>" required>
+                                value="<?php echo isset($dados_usuario['cpf']) ? $dados_usuario['cpf'] : ''; ?>" required onblur="if(!validarCPF(this.value)){ alert('CPF inválido!'); this.value=''; this.focus(); }">
                         </div>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email:</label>
@@ -88,7 +88,7 @@ if (isset($_GET['success'])) {
                         <div class="mb-3">
                             <label for="cep" class="form-label">CEP:</label>
                             <input type="text" class="form-control" id="cep" name="cep" 
-                                value="<?php echo isset($dados_usuario['cep']) ? $dados_usuario['cep'] : ''; ?>" required>
+                                value="<?php echo isset($dados_usuario['cep']) ? $dados_usuario['cep'] : ''; ?>" required onblur="buscarEndereco(this.value);">
                         </div>
                         <div class="mb-3">
                             <label for="endereco" class="form-label">Endereço:</label>
@@ -147,6 +147,69 @@ if (isset($_GET['success'])) {
         $('#telefone_celular').mask('(00) 00000-0000');
         $('#cep').mask('00000-000');
     });
+    function validarCPF(cpf) {
+            cpf = cpf.replace(/[^\d]+/g, ''); // Remove caracteres não numéricos
+            if (cpf == '') return false;
+            // Elimina CPFs inválidos conhecidos
+            if (cpf.length != 11 ||
+                cpf == "00000000000" ||
+                cpf == "11111111111" ||
+                cpf == "22222222222" ||
+                cpf == "33333333333" ||
+                cpf == "44444444444" ||
+                cpf == "55555555555" ||
+                cpf == "66666666666" ||
+                cpf == "77777777777" ||
+                cpf == "88888888888" ||
+                cpf == "99999999999")
+                return false;
+            // Valida 1o digito
+            add = 0;
+            for (i = 0; i < 9; i++)
+                add += parseInt(cpf.charAt(i)) * (10 - i);
+            rev = 11 - (add % 11);
+            if (rev == 10 || rev == 11)
+                rev = 0;
+            if (rev != parseInt(cpf.charAt(9)))
+                return false;
+            // Valida 2o digito
+            add = 0;
+            for (i = 0; i < 10; i++)
+                add += parseInt(cpf.charAt(i)) * (11 - i);
+            rev = 11 - (add % 11);
+            if (rev == 10 || rev == 11)
+                rev = 0;
+            if (rev != parseInt(cpf.charAt(10)))
+                return false;
+            return true;
+        }
+
+        function buscarEndereco(cep) {
+            // Remove caracteres não numéricos do CEP
+            cep = cep.replace(/\D/g, '');
+
+            // Verifica se o CEP possui 8 dígitos
+            if (cep.length === 8) {
+                // Acessa a API do ViaCEP
+                fetch(`https://viacep.com.br/ws/${cep}/json/`)
+                .then(response => response.json())
+                .then(data => {
+                    // Verifica se houve erro na consulta
+                    if (!data.erro) {
+                    // Preenche os campos do formulário
+                    document.getElementById('endereco').value = data.logradouro;
+                    document.getElementById('bairro').value = data.bairro;
+                    document.getElementById('cidade').value = data.localidade;
+                    document.getElementById('estado').value = data.uf;
+                    } else {
+                    // Exibe uma mensagem de erro caso o CEP seja inválido
+                    alert('CEP não encontrado.');
+                    }
+                })
+                .catch(error => console.error('Erro ao consultar API:', error));
+            }
+        }
+
     </script>
 </body>
 </html>
