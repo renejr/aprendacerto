@@ -91,23 +91,62 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Obter o ID do usuário a partir do email da sessão
         $usuario = $db->select("SELECT id FROM usuarios WHERE email = :email", ['email' => $_SESSION['email']]);
         $usuario_id = $usuario[0]['id'];
-    
-        // Atualizar os dados no banco de dados
-        $sql = "UPDATE dados_usuario SET 
-                    nome = :nome,
-                    sobrenome = :sobrenome,
-                    cpf = :cpf,
-                    sexo = :sexo,
-                    cep = :cep,
-                    endereco = :endereco,
-                    numero = :numero,
-                    complemento = :complemento,
-                    bairro = :bairro,
-                    cidade = :cidade,
-                    estado = :estado,
-                    telefone_celular = :telefone_celular,
-                    data_aniversario = :data_aniversario
-                WHERE usuario_id = :usuario_id";  
+
+        // Verificar se já existe um registro para o usuario_id
+        $perfil_existente = $db->select("SELECT 1 FROM dados_usuario WHERE usuario_id = :usuario_id", ['usuario_id' => $usuario_id]);
+
+        // Definir a query SQL com base na existência do perfil
+        if ($perfil_existente) {
+            // Já existe um perfil, então fazemos UPDATE
+            $sql = "UPDATE dados_usuario SET 
+                        nome = :nome,
+                        sobrenome = :sobrenome,
+                        cpf = :cpf,
+                        sexo = :sexo,
+                        cep = :cep,
+                        endereco = :endereco,
+                        numero = :numero,
+                        complemento = :complemento,
+                        bairro = :bairro,
+                        cidade = :cidade,
+                        estado = :estado,
+                        telefone_celular = :telefone_celular,
+                        data_aniversario = :data_aniversario
+                    WHERE usuario_id = :usuario_id";
+        } else {
+            // Não existe um perfil, então fazemos INSERT
+            $sql = "INSERT INTO dados_usuario (
+                        usuario_id, 
+                        nome, 
+                        sobrenome, 
+                        cpf, 
+                        sexo, 
+                        cep, 
+                        endereco, 
+                        numero, 
+                        complemento, 
+                        bairro, 
+                        cidade, 
+                        estado, 
+                        telefone_celular, 
+                        data_aniversario
+                    ) VALUES (
+                        :usuario_id, 
+                        :nome, 
+                        :sobrenome, 
+                        :cpf, 
+                        :sexo, 
+                        :cep, 
+                        :endereco, 
+                        :numero, 
+                        :complemento, 
+                        :bairro, 
+                        :cidade, 
+                        :estado, 
+                        :telefone_celular, 
+                        :data_aniversario
+                    )";
+        }
     
         $params = [
             'nome' => $nome,
@@ -126,7 +165,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'usuario_id' => $usuario_id
         ];
     
-        if ($db->update($sql, $params)) {
+        // Executar a query (UPDATE ou INSERT)
+        if ($db->update($sql, $params)) { // O método update() também funciona para INSERT
             // Redirecionar para a página de perfil com mensagem de sucesso
             header("Location: perfil.php?success=1");
             exit();
