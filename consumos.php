@@ -76,10 +76,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Obter os dados do formulário (exceto o email)
         $nome = $_POST['nome'];
         $sobrenome = $_POST['sobrenome'];
-        // ... (obter os demais campos do formulário)
-    
-        // Validar os dados (implementar as validações necessárias)
-    
+        $cpf = $_POST['cpf'];
+        $sexo = $_POST['sexo'];
+        $cep = $_POST['cep'];
+        $endereco = $_POST['endereco'];
+        $numero = $_POST['numero'];
+        $complemento = $_POST['complemento'];
+        $bairro = $_POST['bairro'];
+        $cidade = $_POST['cidade'];
+        $estado = $_POST['estado'];
+        $telefone_celular = $_POST['telefone_celular'];
+        $data_aniversario = $_POST['data_aniversario'];
+        
         // Obter o ID do usuário a partir do email da sessão
         $usuario = $db->select("SELECT id FROM usuarios WHERE email = :email", ['email' => $_SESSION['email']]);
         $usuario_id = $usuario[0]['id'];
@@ -88,13 +96,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $sql = "UPDATE dados_usuario SET 
                     nome = :nome,
                     sobrenome = :sobrenome,
-                    // ... (atualizar os demais campos)
-                WHERE usuario_id = :usuario_id"; 
+                    cpf = :cpf,
+                    sexo = :sexo,
+                    cep = :cep,
+                    endereco = :endereco,
+                    numero = :numero,
+                    complemento = :complemento,
+                    bairro = :bairro,
+                    cidade = :cidade,
+                    estado = :estado,
+                    telefone_celular = :telefone_celular,
+                    data_aniversario = :data_aniversario
+                WHERE usuario_id = :usuario_id";  
     
         $params = [
             'nome' => $nome,
             'sobrenome' => $sobrenome,
-            // ... (adicionar os demais parâmetros)
+            'cpf' => $cpf,
+            'sexo' => $sexo,
+            'cep' => $cep,
+            'endereco' => $endereco,
+            'numero' => $numero,
+            'complemento' => $complemento,
+            'bairro' => $bairro,
+            'cidade' => $cidade,
+            'estado' => $estado,
+            'telefone_celular' => $telefone_celular,
+            'data_aniversario' => $data_aniversario,
             'usuario_id' => $usuario_id
         ];
     
