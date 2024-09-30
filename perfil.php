@@ -30,36 +30,6 @@ if (isset($_GET['success'])) {
 } elseif (isset($_GET['error'])) {
     echo "<div class='alert alert-danger'>Erro ao atualizar os dados.</div>";
 }
-
-// Lógica para atualizar os dados (se o formulário for enviado)
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Obter os dados do formulário
-    $nome = $_POST['nome'];
-    // ... (obter os demais campos do formulário)
-
-    // Validar os dados (vamos implementar isso em breve)
-
-    // Atualizar os dados no banco de dados
-    $sql = "UPDATE dados_usuario SET 
-                nome = :nome,
-                sobrenome = :sobrenome,
-                // ... (atualizar os demais campos)
-            WHERE usuario_id = :usuario_id"; 
-
-    $params = [
-        'nome' => $nome,
-        'sobrenome' => $sobrenome,
-        // ... (adicionar os demais parâmetros)
-        'usuario_id' => $dados_usuario['usuario_id'] 
-    ];
-
-    if ($db->update($sql, $params)) {
-        echo "<div class='alert alert-success'>Dados atualizados com sucesso!</div>";
-    } else {
-        echo "<div class='alert alert-danger'>Erro ao atualizar os dados.</div>";
-    }
-}
-
 ?>
 
 <!DOCTYPE html>
