@@ -87,6 +87,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $estado = $_POST['estado'];
         $telefone_celular = $_POST['telefone_celular'];
         $data_aniversario = $_POST['data_aniversario'];
+
+        // Processamento da imagem
+        if (isset($_POST['imagem_cropped']) && !empty($_POST['imagem_cropped'])) {
+            // Decodifica a imagem em base64
+            $imagem = base64_decode(preg_replace('#^data:image/\w+;base64,#i', '', $_POST['imagem_cropped']));
+        } else {
+            // Se não houver imagem recortada, mantém a imagem existente ou define como NULL
+            $imagem = isset($dados_usuario['imagem']) ? $dados_usuario['imagem'] : NULL;
+        }
         
         // Obter o ID do usuário a partir do email da sessão
         $usuario = $db->select("SELECT id FROM usuarios WHERE email = :email", ['email' => $_SESSION['email']]);
@@ -112,6 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         estado = :estado,
                         telefone_celular = :telefone_celular,
                         data_aniversario = :data_aniversario
+                        , imagem = :imagem
                     WHERE usuario_id = :usuario_id";
         } else {
             // Não existe um perfil, então fazemos INSERT
@@ -130,6 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         estado, 
                         telefone_celular, 
                         data_aniversario
+                        , imagem
                     ) VALUES (
                         :usuario_id, 
                         :nome, 
@@ -145,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         :estado, 
                         :telefone_celular, 
                         :data_aniversario
+                        , :imagem
                     )";
         }
     
@@ -163,6 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             'telefone_celular' => $telefone_celular,
             'data_aniversario' => $data_aniversario,
             'usuario_id' => $usuario_id
+            , 'imagem' => $imagem
         ];
     
         // Executar a query (UPDATE ou INSERT)

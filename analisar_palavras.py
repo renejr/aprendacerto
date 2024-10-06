@@ -41,8 +41,7 @@ def calcular_dificuldade(palavra):
 
 # Níveis de dificuldade
 niveis = 10
-palavras_por_nivel = 100
-
+palavras_por_nivel = 1000
 # Loop pelos níveis
 for nivel in range(1, niveis + 1):
     print(f"Processando nível {nivel}...")

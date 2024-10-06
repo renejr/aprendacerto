@@ -39,9 +39,21 @@ if (isset($_GET['success'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu Perfil - AprendaCerto</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #000; 
+        }
+        /* Estilo para o container da imagem a ser recortada */
+        img {
+            max-width: 100%; 
+        }
+        .container-img-crop {
+            position: relative;
+            width: 200px; /* Largura máxima da área de recorte */
+            height: 200px; /* Altura máxima da área de recorte */
+            overflow: hidden;
+            margin: 20px auto; /* Centralizar o container */
         }
     </style>
 </head>
@@ -54,8 +66,28 @@ if (isset($_GET['success'])) {
                         <h4 class="mb-0">Meu Perfil</h4>
                     </div>
                     <div class="card-body">
-                    <form method="POST" action="consumos.php">
+                    <form method="POST" action="consumos.php" enctype="multipart/form-data" id="formPerfil">
                         <input type="hidden" name="action" id="action" value="atualizar_perfil">
+                        <input type="hidden" name="imagem_cropped" id="imagem_cropped">
+                        <?php
+                        // Se o usuário tiver uma imagem recortada
+                        if (isset($dados_usuario['imagem_recortada']) && !empty($dados_usuario['imagem_recortada'])) {
+                            echo '<div class="text-center mb-3">';
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($dados_usuario['imagem_recortada']) . '" class="img-fluid rounded" alt="Foto de Perfil" style="max-width: 200px;">';
+                            echo '</div>';
+                        } else {
+                            // Se o usuário não tiver uma imagem recortada, exibe a imagem original
+                            if (isset($dados_usuario['imagem']) && !empty($dados_usuario['imagem'])) {
+                            echo '<div class="text-center mb-3">';
+                            echo '<img src="data:image/jpeg;base64,' . base64_encode($dados_usuario['imagem']) . '" class="img-fluid rounded" alt="Foto de Perfil" style="max-width: 200px;">';
+                            echo '</div>';
+                            }
+                        }
+                        ?>
+                        <div class="mb-3">
+                            <label for="imagem" class="form-label">Imagem de Perfil:</label>
+                            <input type="file" class="form-control" id="imagem" name="imagem" accept="image/*">
+                        </div>
                         <div class="mb-3">
                             <label for="nome" class="form-label">Nome:</label>
                             <input type="text" class="form-control" id="nome" name="nome" 
@@ -138,6 +170,26 @@ if (isset($_GET['success'])) {
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalCrop" tabindex="-1" aria-labelledby="modalCropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalCropLabel">Recortar Imagem</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-img-crop">
+                        <img id="imageToCrop" src="#" alt="Imagem para Recorte">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="crop">Recortar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -209,7 +261,59 @@ if (isset($_GET['success'])) {
                 .catch(error => console.error('Erro ao consultar API:', error));
             }
         }
+        let cropper; // Variável global para o objeto Cropper
 
+        // Quando o usuário selecionar uma imagem
+        $('#imagem').on('change', function (e) {
+            if (e.target.files && e.target.files.length) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const image = document.getElementById('imageToCrop');
+                    image.src = e.target.result;
+                    // Inicializa o Cropper.js quando a imagem for carregada
+                    cropper = new Cropper(image, {
+                        aspectRatio: 1 / 1, // Proporção 1:1 (quadrado)
+                        viewMode: 1, // Exibe a grade de recorte
+                        // Outras opções de estilo e comportamento do Cropper podem ser adicionadas aqui
+                    });
+                    // Abre o modal de recorte
+                    $('#modalCrop').modal('show');
+                };
+                reader.readAsDataURL(e.target.files[0]);
+            }
+        });
+
+        // Quando o botão "Recortar" for clicado
+        $('#crop').click(function () {
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 150, // Largura da imagem final
+                height: 150 // Altura da imagem final
+            });
+            // Converte a imagem recortada para base64
+            croppedCanvas.toBlob(function (blob) {
+                const reader = new FileReader();
+                reader.onloadend = function () {
+                    // Define o valor do campo oculto com a imagem em base64
+                    $('#imagem_cropped').val(reader.result);
+                    // Fecha o modal
+                    $('#modalCrop').modal('hide');
+                }
+                if (blob) {
+                    reader.readAsDataURL(blob);
+                }
+            });
+        });
+
+        // Quando o botão "Cancelar" for clicado
+        $('[data-bs-dismiss="modal"]').click(function() {
+            cropper.destroy(); // Destrói o objeto Cropper
+            cropper = null; // Limpa a variável cropper
+            $('#imagem').val(''); // Limpa o campo de imagem
+        });
     </script>
 </body>
-</html>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.16/jquery.mask.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    </html>
