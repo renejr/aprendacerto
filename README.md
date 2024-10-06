@@ -1,6 +1,6 @@
-# AprendaCerto
+# Aprenda
 
-**AprendaCerto** é um sistema de gerenciamento de usuários com funcionalidades de login, cadastro e recuperação de senha, desenvolvido com HTML, CSS, Bootstrap, JavaScript, jQuery, PHP e MySQL.
+**Aprenda** é um sistema de gerenciamento de usuários com funcionalidades de login, cadastro e recuperação de senha, desenvolvido com HTML, CSS, Bootstrap, JavaScript, jQuery, PHP e MySQL.
 
 ## Funcionalidades
 
@@ -35,7 +35,7 @@
 Clone o projeto do seu repositório Git localmente:
 
 ```bash
-git clone https://github.com/renejr/aprendacerto.git
+git clone https://github.com/seu-usuario/aprendacerto.git
 cd aprendacerto
 ```
 
@@ -130,7 +130,7 @@ http://localhost/aprendacerto/index.html
 aprendacerto/
 │
 ├── img/
-│   └── logo-aprendacerto.png  # Logo do sistema
+│   └── logo-aprenda.png  # Logo do sistema
 ├── bdclass.php            # Classe de conexão ao banco de dados (PDO)
 ├── consumos.php           # Lógica de backend (login, cadastro, etc.)
 ├── index.html             # Página de login

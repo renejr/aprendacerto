@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if (password_verify($senha, $usuario[0]['senha'])) {
                 // Inicia a sessão do usuário
                 $_SESSION['email'] = $email;
+                $_SESSION['usuario_id'] = $usuario[0]['id'];
                 echo json_encode(['status' => 'success', 'message' => 'Login efetuado com sucesso!']);
             } else {
                 echo json_encode(['status' => 'error', 'message' => 'Senha incorreta.']);

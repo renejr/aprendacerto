@@ -21,7 +21,7 @@ $niveis = $db->select($sql);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aprenda Jogando <?php echo $jogos[0]['nome']; ?>  - AprendaCerto</title>
+    <title>Aprenda Jogando <?php echo $jogos[0]['nome']; ?>  - Aprenda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
