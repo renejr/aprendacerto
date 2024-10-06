@@ -9,8 +9,9 @@ if (!isset($_SESSION['email'])) {
 require_once 'bdclass.php';
 $db = new BD();
 
-$sql = "SELECT * FROM jogos where id = $_GET[jogo_id]"; 
-$jogos = $db->select($sql);
+// Consulta SQL com parâmetro para prevenir Injeção SQL
+$sql = "SELECT * FROM jogos WHERE id = :jogo_id"; 
+$jogos = $db->select($sql, ['jogo_id' => $_GET['jogo_id']]);
 
 $sql = "SELECT * FROM levels ORDER BY posicao ASC"; 
 $niveis = $db->select($sql);
@@ -77,6 +78,23 @@ $niveis = $db->select($sql);
         <div class="row">
             <?php if (!empty($niveis)): ?>
                 <?php foreach ($niveis as $nivel): ?>
+                    <?php                    
+                    $sql = "SELECT * FROM plays where jogo_id = :jogo_id AND usuario_id = :usuario_id AND nivel = :level";
+                    $plays = $db->select($sql, ['jogo_id' => $_GET['jogo_id'], 'usuario_id' => $_SESSION['usuario_id'], 'level' => $nivel['level']]);
+
+                    if (empty($plays)) {
+                        // Seleciona 5 palavras aleatorias na tabela 'palavras' com o level correto
+                        $sql = "SELECT * FROM palavras WHERE nivel = :level ORDER BY RAND() LIMIT 5";
+                        $palavras = $db->select($sql, ['level' => $nivel['level']]);
+
+                        // Insere o usuario_id, jogo_id, palavra_id e o nivel na tabela 'plays'
+                        foreach ($palavras as $palavra) {
+                            $sql = "INSERT INTO plays (usuario_id, jogo_id, palavra_id, nivel) VALUES (:usuario_id, :jogo_id, :palavra_id, :level)";
+                            $db->insert($sql, ['usuario_id' => $_SESSION['usuario_id'], 'jogo_id' => $_GET['jogo_id'], 'palavra_id' => $palavra['id'], 'level' => $nivel['level']]);
+                        }
+
+                    }
+                    ?>
                     <div class="col-md-4"> 
                         <div class="jogo-container" style="background-image: url('img/<?php echo $nivel['imagem']; ?>.jpg');"> 
                             <a href="jogar.php?jogo_id=<?php echo $_GET['jogo_id']; ?>&level_id=<?php echo $nivel['id']; ?>" class="jogo-link">
