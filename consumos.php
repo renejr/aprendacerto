@@ -189,6 +189,39 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: perfil.php?error=1");
             exit();
         }
+    } elseif ($action == 'buscar_palavra') {
+        // print_r($_POST);
+        // print_r($_SESSION);
+
+        // Busca a palavra no banco de dados e na tabela plays
+        $palavra = $db->select("SELECT pa.id, pa.palavra, pa.definicao, pa.exemplos, pa.sinonimos FROM plays p JOIN palavras pa ON p.palavra_id = pa.id WHERE p.usuario_id = $_SESSION[usuario_id] AND p.nivel = $_POST[nivel] AND p.status = 0 AND p.jogo_id = $_POST[jogo_id] ORDER BY RAND() LIMIT 0, 1");
+        $_palavra = str_replace('_', '-', $palavra[0]['palavra']);
+
+        // print_r($palavra[0]);
+
+        echo json_encode(['id' => $palavra[0]['id'], 'palavra' =>  $_palavra, 'definicao' => $palavra[0]['definicao'], 'exemplos' => $palavra[0]['exemplos'], 'sinonimos' => $palavra[0]['sinonimos']]);
+    } elseif ($action == 'modifica_status') {
+        // print_r($_POST);
+        // print_r($_SESSION);
+
+        // Atualiza o status da palavra no banco de dados
+        $sql = "UPDATE plays SET status = :status, tentativas = :tentativas WHERE palavra_id = :palavra_id AND usuario_id = :usuario_id AND jogo_id = :jogo_id";
+        $params = [
+            'status' => $_POST['status'],
+            'palavra_id' => $_POST['palavra_id'], 
+            'tentativas' => $_POST['tentativas'],
+            'usuario_id' => $_SESSION['usuario_id'],
+            'jogo_id' => $_POST['jogo_id']
+        ];
+
+        if ($db->update($sql, $params)) {
+            echo 1;
+        } else {
+            echo 0;
+        }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);
     }
+
     
 }

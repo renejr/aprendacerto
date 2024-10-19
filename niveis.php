@@ -78,13 +78,14 @@ $niveis = $db->select($sql);
         <div class="row">
             <?php if (!empty($niveis)): ?>
                 <?php foreach ($niveis as $nivel): ?>
-                    <?php                    
+                    <?php            
+                    $nivelLibe = 1;        
                     $sql = "SELECT * FROM plays where jogo_id = :jogo_id AND usuario_id = :usuario_id AND nivel = :level";
                     $plays = $db->select($sql, ['jogo_id' => $_GET['jogo_id'], 'usuario_id' => $_SESSION['usuario_id'], 'level' => $nivel['level']]);
 
                     if (empty($plays)) {
-                        // Seleciona 5 palavras aleatorias na tabela 'palavras' com o level correto
-                        $sql = "SELECT * FROM palavras WHERE nivel = :level ORDER BY RAND() LIMIT 5";
+                        // Seleciona 20 palavras aleatorias na tabela 'palavras' com o level correto
+                        $sql = "SELECT * FROM palavras WHERE nivel = :level ORDER BY RAND() LIMIT 20";
                         $palavras = $db->select($sql, ['level' => $nivel['level']]);
 
                         // Insere o usuario_id, jogo_id, palavra_id e o nivel na tabela 'plays'
@@ -94,11 +95,34 @@ $niveis = $db->select($sql);
                         }
 
                     }
+
+                    if($nivel['level'] > 1) {
+                        // Valido na tabela plays se o nivel anterior ja possui 5 palavras jogadas e com p status = 1 para mostrar o botão de proximo nivel
+                        $sql = "SELECT * FROM plays WHERE jogo_id = :jogo_id AND usuario_id = :usuario_id AND nivel = :level AND status = 1";
+                        $plays = $db->select($sql, ['jogo_id' => $_GET['jogo_id'], 'usuario_id' => $_SESSION['usuario_id'], 'level' => $nivel['level'] - 1]);
+                        if (count($plays) >= 5) {
+                            $nivelLibe = 1;
+                        } else {
+                            $nivelLibe = 0;
+                        }
+                    }
+                    
+                    $jogoNome = lcfirst($jogos[0]['nome']);
+                    $jogoNome = str_replace(' ', '', $jogoNome);
                     ?>
                     <div class="col-md-4"> 
                         <div class="jogo-container" style="background-image: url('img/<?php echo $nivel['imagem']; ?>.jpg');"> 
-                            <a href="jogar.php?jogo_id=<?php echo $_GET['jogo_id']; ?>&level_id=<?php echo $nivel['id']; ?>" class="jogo-link">
-                            </a>
+                            <?php
+                            if ($nivelLibe == 1) {
+                                ?>
+                                <a href="<?php echo $jogoNome; ?>.php?jogo_id=<?php echo $_GET['jogo_id']; ?>&level_id=<?php echo $nivel['id']; ?>" class="jogo-link"></a>
+                                <?php
+                            } else {
+                                ?>
+                                <a href="javascript:void(0);" class="jogo-link"></a>
+                                <?php
+                            }
+                            ?>
                         </div>
                     </div>
                 <?php endforeach; ?>
