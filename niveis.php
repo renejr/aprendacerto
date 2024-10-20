@@ -55,6 +55,14 @@ $niveis = $db->select($sql);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); /* Sombra no texto */
         }
 
+        /* .img-trofeu{
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            background-color: red;
+
+        } */
+
         /* Para telas menores, ajuste a quantidade de colunas */
         @media (max-width: 768px) {
             .col-md-4 {
@@ -84,8 +92,8 @@ $niveis = $db->select($sql);
                     $plays = $db->select($sql, ['jogo_id' => $_GET['jogo_id'], 'usuario_id' => $_SESSION['usuario_id'], 'level' => $nivel['level']]);
 
                     if (empty($plays)) {
-                        // Seleciona 20 palavras aleatorias na tabela 'palavras' com o level correto
-                        $sql = "SELECT * FROM palavras WHERE nivel = :level ORDER BY RAND() LIMIT 20";
+                        // Seleciona 100 palavras aleatorias na tabela 'palavras' com o level correto
+                        $sql = "SELECT DISTINCT * FROM palavras WHERE nivel = :level ORDER BY RAND() LIMIT 100";
                         $palavras = $db->select($sql, ['level' => $nivel['level']]);
 
                         // Insere o usuario_id, jogo_id, palavra_id e o nivel na tabela 'plays'
@@ -93,7 +101,6 @@ $niveis = $db->select($sql);
                             $sql = "INSERT INTO plays (usuario_id, jogo_id, palavra_id, nivel) VALUES (:usuario_id, :jogo_id, :palavra_id, :level)";
                             $db->insert($sql, ['usuario_id' => $_SESSION['usuario_id'], 'jogo_id' => $_GET['jogo_id'], 'palavra_id' => $palavra['id'], 'level' => $nivel['level']]);
                         }
-
                     }
 
                     if($nivel['level'] > 1) {
@@ -110,11 +117,13 @@ $niveis = $db->select($sql);
                     $jogoNome = lcfirst($jogos[0]['nome']);
                     $jogoNome = str_replace(' ', '', $jogoNome);
                     ?>
+                    
                     <div class="col-md-4"> 
                         <div class="jogo-container" style="background-image: url('img/<?php echo $nivel['imagem']; ?>.jpg');"> 
                             <?php
                             if ($nivelLibe == 1) {
                                 ?>
+                                 <!-- <div id="trofeu" name="trofeu" class="img-trofeu"></div> -->
                                 <a href="<?php echo $jogoNome; ?>.php?jogo_id=<?php echo $_GET['jogo_id']; ?>&level_id=<?php echo $nivel['id']; ?>" class="jogo-link"></a>
                                 <?php
                             } else {

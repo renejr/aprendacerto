@@ -33,6 +33,7 @@ if(isset($_GET['jogo_id'])){
     <?php include 'navbar.php'; ?>
     <div class="container">
         <h1 class="text-center">Jogo da Forca</h1>
+        <div id="timer">Tempo: <span id="tempo">0</span>s</div>
         <div class="row">
             <div class="col-md-6">
                 <canvas id="forca"></canvas>
@@ -45,7 +46,8 @@ if(isset($_GET['jogo_id'])){
                 <div id="teclado">
                     </div>
                 <hr>
-                <h2><div id="definicao"></div></h2>
+                <button id="dica" class="btn btn-secondary">Dica</button>
+                <h2><div id="definicao" style="display: none;"></div></h2>
             </div>
         </div>
     </div>
@@ -65,6 +67,7 @@ if(isset($_GET['jogo_id'])){
                     <p><strong>Sinônimos:</strong> <span id="modalSinonimos"></span></p>
                 </div>
                 <div class="modal-footer">
+                    <p><strong><span id="avisoAcertos">Acertos:</strong></span><span id="modalAcertos"></span></p>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
                 </div>
             </div>
