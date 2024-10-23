@@ -74,11 +74,6 @@ $(document).ready(function() {
                 Jogo.palavraExemplos = response.exemplos; 
                 Jogo.palavraSinonimos = response.sinonimos; 
                 
-                console.log(Jogo.palavraID);
-                console.log(Jogo.palavraSecreta);
-                console.log(Jogo.palavraDefinicao);
-                console.log(Jogo.palavraExemplos);
-                console.log(Jogo.palavraSinonimos);
                 $("#definicao").text(Jogo.palavraDefinicao);
                 Jogo.iniciar(); 
                 reiniciarTimer();
@@ -357,12 +352,9 @@ $(document).ready(function() {
     function verificarFimDeJogo() {
         var palavraAdivinhada = !$("#palavra-secreta").text().includes("_");
         if (palavraAdivinhada) {
-            // console.log("Palavra ID: " + Jogo.palavraID);
-            // console.log("Jogo.tentativas: " + Jogo.tentativas);
+
             // Mostrar informações na modal 
             Jogo.acertos += 1;
-
-            console.log("acertos: " + Jogo.acertos);
             
             $("#modalPalavra").text(Jogo.palavraSecreta);
             $("#modalDefinicao").text(Jogo.palavraDefinicao);

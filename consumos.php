@@ -1,4 +1,5 @@
 <?php
+ini_set('memory_limit', '256M'); // Aumenta o limite de memória para 256MB
 session_start();
 require_once 'bdclass.php';
 $db = new BD();
@@ -189,10 +190,40 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: perfil.php?error=1");
             exit();
         }
-    } elseif ($action == 'buscar_palavra') {
+    } elseif ($action == "buscar_palavras_cruzadas"){
         // print_r($_POST);
         // print_r($_SESSION);
 
+        $jogo_id = $_POST['jogo_id'];
+        $nivel = $_POST['nivel'];
+        $usuario_id = $_SESSION['usuario_id'];
+
+        // echo("<hr>");
+
+        // echo("jogo_id: $jogo_id<br>");
+        // echo("nivel: $nivel<br>");
+        // echo("usuario_id: $usuario_id<br>");
+
+        // Consulta SQL para buscar as palavras do jogo e nível especificados para o usuario ativo
+        $result = $db->select("SELECT p.palavra, p.definicao FROM palavras p INNER JOIN plays pl ON p.id = pl.palavra_id WHERE pl.jogo_id = $jogo_id AND pl.nivel = $nivel AND pl.usuario_id = $usuario_id LIMIT 100;");
+
+        // Verifica se a consulta retornou resultados
+        if ($result) {
+            $palavras = array();
+            foreach ($result as $row) {
+                $palavras[] = $row;
+            }
+            // print_r($palavras);
+        } else {
+            echo "Nenhuma palavra encontrada.";
+        }
+
+        // print_r($palavras);
+
+        echo json_encode($palavras);
+        exit();
+    
+    } elseif ($action == 'buscar_palavra') {
         // Busca a palavra no banco de dados e na tabela plays
         $palavra = $db->select("SELECT pa.id, pa.palavra, pa.definicao, pa.exemplos, pa.sinonimos FROM plays p JOIN palavras pa ON p.palavra_id = pa.id WHERE p.usuario_id = $_SESSION[usuario_id] AND p.nivel = $_POST[nivel] AND p.status = 0 AND p.jogo_id = $_POST[jogo_id] ORDER BY RAND() LIMIT 0, 1");
         $_palavra = str_replace('_', '-', $palavra[0]['palavra']);
@@ -222,6 +253,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Ação inválida']);
     }
-
-    
 }
+

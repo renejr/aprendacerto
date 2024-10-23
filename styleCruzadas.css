@@ -1,0 +1,47 @@
+/* Estilos para o tabuleiro e as células */
+#tabuleiro {
+    border-collapse: collapse;
+    font-size: 20px;
+    margin: 20px auto; /* Centraliza o tabuleiro */
+}
+
+#tabuleiro td {
+    width: 30px;
+    height: 30px;
+    border: 1px solid black;
+    text-align: center;
+}
+
+#tabuleiro input {
+    width: 100%; /* Faz o input ocupar toda a célula */
+    height: 100%;
+    text-align: center;
+    font-size: 20px;
+    border: none; /* Remove a borda do input */
+}
+
+/* Estilos para as definições */
+#definicoes {
+    margin-top: 20px;
+}
+
+/* Estilos para o botão de verificar */
+#verificar {
+    margin-top: 20px;
+    display: block; /* Faz o botão ocupar toda a largura */
+    width: 100%;
+}
+
+/* Estilos para as células corretas e incorretas */
+.correta {
+    background-color: lightgreen; /* Cor de fundo verde claro para células corretas */
+}
+
+.incorreta {
+    background-color: lightcoral; /* Cor de fundo vermelho claro para células incorretas */
+}
+
+#instrucoes {
+    margin-top: 20px;
+    font-size: 18px; /* Ajuste o tamanho da fonte conforme necessário */
+  }
