@@ -364,7 +364,9 @@ $(document).ready(function() {
 
             if(Jogo.acertos >= 5){ 
                 $("#avisoAcertos").text("");
-                $("#modalAcertos").html('<a href="forca.php?jogo_id=' + jogo_id + '&level_id=' + (nivelDificuldade+1) + '" class="btn btn-primary">Parabens! Você subiu de nível!</a>');
+                if(nivelDificuldade+1 <= 10){
+                    $("#modalAcertos").html('<a href="forca.php?jogo_id=' + jogo_id + '&level_id=' + (nivelDificuldade+1) + '" class="btn btn-primary">Parabens! Você subiu de nível!</a>');
+                }
             }
 
             // Mostrar modal

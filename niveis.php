@@ -103,7 +103,7 @@ $niveis = $db->select($sql);
                         }
                     }
 
-                    if($nivel['level'] > 1) {
+                    if($nivel['level'] > 1 || $nivel['level'] <= 10 ) {
                         // Valido na tabela plays se o nivel anterior ja possui 5 palavras jogadas e com p status = 1 para mostrar o botão de proximo nivel
                         $sql = "SELECT * FROM plays WHERE jogo_id = :jogo_id AND usuario_id = :usuario_id AND nivel = :level AND status = 1";
                         $plays = $db->select($sql, ['jogo_id' => $_GET['jogo_id'], 'usuario_id' => $_SESSION['usuario_id'], 'level' => $nivel['level'] - 1]);
