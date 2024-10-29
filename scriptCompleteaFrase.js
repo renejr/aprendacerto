@@ -1,5 +1,6 @@
 var palavras = [];
 var definicoes = [];
+var palavra_id = [];
 var palavraAtual = 0;
 var tempoRestante = 300; // 5 minutos em segundos
 
@@ -10,11 +11,16 @@ function buscarPalavras() {
         data: { action: 'buscar_palavras_cruzadas', jogo_id: jogo_id, nivel: level_id },
         dataType: 'json',
         success: function(response) {
-            palavras = response.slice(0, 10); // Adaptado para buscar 20 palavras
+            palavras = response.slice(0, 20); // Adaptado para buscar 20 palavras
             for (var i = 0; i < palavras.length; i++) {
-              definicoes.push(palavras[i].definicao);
-              palavras[i] = palavras[i].palavra.toUpperCase(); // Ajusta a palavra para maiúsculas
+                palavra_id.push(palavras[i].id);
+                definicoes.push(palavras[i].definicao);
+                palavras[i] = palavras[i].palavra.toUpperCase(); // Ajusta a palavra para maiúsculas
             }
+
+            // console.log(palavras);
+            // console.log(definicoes);
+            // console.log(palavra_id);
             exibirPalavra();
         },
         error: function() {
@@ -24,8 +30,8 @@ function buscarPalavras() {
 }
 
 function exibirPalavra() {
-    console.log(palavraAtual);
-    console.log(palavras[palavraAtual]);
+    //console.log(palavraAtual);
+    //console.log(palavras[palavraAtual]);
     
     var palavra = palavras[palavraAtual];
     var letras = palavra.split('');
@@ -56,13 +62,11 @@ function criarTeclado() {
 }
 
 function chutarLetra(letra) {
-    console.log(palavraAtual);
-    console.log(palavras[palavraAtual]);
-
     var palavra = palavras[palavraAtual];
     var letras = palavra.split('');
     var acertouLetra = false;
 
+   
     for (var i = 0; i < letras.length; i++) {
         if (letras[i] === letra) {
             $("#palavras-container .letra:eq(" + i + ")").text(letra);
@@ -81,6 +85,12 @@ function chutarLetra(letra) {
         });
 
         if (palavraCompleta) {
+            // console.log("ID da palavra:", palavra_id[palavraAtual]);
+            // console.log(palavraAtual);
+            // console.log(palavras[palavraAtual]);
+
+            modificaStatus(palavra_id[palavraAtual], 1, 1, jogo_id);
+            
             // Move a palavra e a definição para a lista de palavras acertadas
             $("#palavras-acertadas").append($("#palavras-container .palavra"));
             $("#palavras-acertadas").append('<div class="definicao">' + definicoes[palavraAtual] + '</div>');
@@ -95,6 +105,17 @@ function chutarLetra(letra) {
             }
         }
     }
+}
+
+function modificaStatus(palavra_id, status, tentativas, jogo_id) {
+    $.ajax({
+        url: 'consumos.php',
+        type: 'POST',
+        data: { action: 'modifica_status', palavra_id: palavra_id, status: status, tentativas: tentativas, jogo_id: jogo_id },
+        success: function(response) {
+            console.log(response);
+        }
+    })
 }
 
 function atualizarTimer() {
