@@ -1,0 +1,90 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000000; /* Fundo escuro */
+    color: white; /* Cor do texto */
+}
+
+.container {
+    margin-top: 20px;
+}
+
+h1 {
+    color: #FFFF00; /* Cor do título */
+    margin-bottom: 20px;
+}
+
+#timer {
+    font-size: 18px;
+    margin-bottom: 20px;
+    text-align: right;
+}
+
+#palavras-container {
+    text-align: center;
+    font-size: 36px; /* Tamanho da fonte das letras */
+    letter-spacing: 10px; /* Espaçamento entre as letras */
+}
+
+#palavras-container .letra {
+    border-bottom: 2px solid white; /* Sublinhado para as letras */
+    padding: 0 5px; /* Espaçamento interno das letras */
+}
+
+#palavras-acertadas {
+    overflow-y: auto; /* Adiciona a barra de rolagem vertical */
+    max-height: 200px; /* Define a altura máxima da div */
+}
+
+#definicoes {
+    margin-top: 20px;
+    font-size: 18px;
+    border: 1px solid white; /* Borda para a caixa de definições */
+    padding: 10px; /* Espaçamento interno da caixa de definições */
+}
+
+#teclado {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+#teclado button {
+    margin: 5px;
+    width: 40px;
+    height: 40px;
+    font-size: 18px; /* Tamanho da fonte dos botões */
+}
+
+/* Estilos para os botões do teclado */
+#teclado button.btn-primary {
+    background-color: #4CAF50; /* Cor de fundo verde */
+    color: white; /* Cor do texto */
+    border: none; /* Sem borda */
+    border-radius: 5px; /* Borda arredondada */
+    transition: background-color 0.3s ease; /* Transição suave na cor de fundo */
+}
+
+#teclado button.btn-primary:hover {
+    background-color: #3e8e41; /* Cor de fundo verde escuro ao passar o mouse */
+}
+
+#teclado button.btn-primary:disabled {
+    background-color: red; /* Cor de fundo vermelha para botões desabilitados */
+    color: white; /* Cor do texto */
+    border: none; /* Sem borda */
+    cursor: default; /* Cursor padrão para botões desabilitados */
+}
+
+/* Media query para telas menores (responsividade) */
+@media (max-width: 768px) {
+    #palavras-container {
+        font-size: 24px; /* Tamanho da fonte menor para telas menores */
+    }
+
+    #teclado button {
+        width: 30px; /* Largura dos botões menor para telas menores */
+        height: 30px; /* Altura dos botões menor para telas menores */
+        font-size: 14px; /* Tamanho da fonte menor para telas menores */
+    }
+}
