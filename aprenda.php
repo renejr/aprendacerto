@@ -9,7 +9,7 @@ if (!isset($_SESSION['email'])) {
 require_once 'bdclass.php';
 $db = new BD();
 
-$sql = "SELECT * FROM jogos ORDER BY nome ASC"; 
+$sql = "SELECT * FROM jogos WHERE ativo = 1 ORDER BY nome ASC"; 
 $jogos = $db->select($sql);
 ?>
 
